@@ -2,14 +2,14 @@
 file=$1
 function create_student(){
     # create account
-    sudo useradd -m -d /home/HAD/${3}/${4}/${1} ${1}
+    sudo useradd -m -d /home/HAD/${3}/${4}/${2} ${2}
     # add to student group
-    sudo usermod -g student $1
+    sudo usermod -g student $2
     #add to hostel group
-    sudo usermod -aG $3 $1
+    sudo usermod -aG $3 $2
 
     deptcode=${2:0:4}
-    year=${2:4:2}
+    year=$((${2:4:2}+2000))
     month=$(date +%B)
 
     case $deptcode in 
@@ -33,22 +33,27 @@ function create_student(){
         ;;
     esac
     #userDetails.txt
-    sudo touch /home/HAD/$3/$4/$1/userDetails.txt
-    sudo chmod 402 /home/HAD/$3/$4/$1/userDetails.txt
-    sudo echo "$1 $2 $dept $year $3 $5 $month $6" > /home/HAD/$3/$4/$1/userDetails.txt
+    sudo touch /home/HAD/$3/$4/$2/userDetails.txt
+    sudo chmod 702 /home/HAD/$3/$4/$2/userDetails.txt
+    sudo echo "$1 $2 $dept $year $3 $5 $month $6" > /home/HAD/$3/$4/$2/userDetails.txt
 
     #fees.txt
-    sudo touch /home/HAD/$3/$4/$1/fees.txt
-    sudo chmod 402 /home/HAD/$3/$4/$1/fees.txt
-    sudo echo "0 0 0 0" > /home/HAD/$3/$4/$1/fees.txt
-
-    sudo chmod -R 700 /home/HAD/$3/$4/$1
-    sudo chown -R $1: /home/HAD/$3/$4/$1
+    sudo touch /home/HAD/$3/$4/$2/fees.txt
+    sudo chmod 702 /home/HAD/$3/$4/$2/fees.txt
+    sudo echo "TuitionFee HostelRent ServiceCharge MessFee
+0 0 0 0
+Transaction history" > /home/HAD/$3/$4/$2/fees.txt
 }
 
 #creating HAD account
 sudo useradd -m -d /home/HAD HAD
 sudo touch /home/HAD/mess.txt
+sudo chmod 702 /home/HAD/mess.txt
+sudo echo "Mess capacity 
+1 35
+2 35
+3 35 
+Student Preferences" > /home/HAD/mess.txt
 echo "HAD account created"
 
 #creating accounts for hostel wardens
@@ -62,7 +67,7 @@ do
 done
 echo "Hostel accounts created"
 
-echo "creating student accounts"
+echo "Creating student accounts"
 
 sudo groupadd student
 if [ $# -eq 1 ]
